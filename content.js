@@ -31,6 +31,10 @@ function addPreviewButton(codeArea) {
 
   button.addEventListener("click", () => {
     const content = codeArea.textContent;
+    //截取<!DOCTYPE html>到</html>之间的内容
+    const start = content.indexOf("<!DOCTYPE html>");
+    const end = content.indexOf("</html>");
+    const htmlContent = content.substring(start, end + 7);
     // 创建一个弹窗容器
     const modal = document.createElement("div");
     modal.style.cssText = `
@@ -40,6 +44,7 @@ function addPreviewButton(codeArea) {
       transform: translate(-50%, -50%);
       width: 720px;
       height: 520px;
+      padding: 85px 0 0 0;
       background-color: #fff;
       border-radius: 10px;
       box-shadow: 0 2px 10px rgba(0,0,0,0.2);
@@ -64,9 +69,9 @@ function addPreviewButton(codeArea) {
     });
     // 创建一个 iframe 元素
     const iframe = document.createElement("iframe");
-    iframe.srcdoc = content;
-    iframe.style.width = "700px";
-    iframe.style.height = "500px";
+    iframe.srcdoc = htmlContent;
+    iframe.style.width = "100%";
+    iframe.style.height = "100%";
     iframe.style.border = "none";
     iframe.style.borderRadius = "10px";
     // 将 iframe 和关闭按钮添加到弹窗容器中
@@ -86,10 +91,12 @@ const observer = new MutationObserver((mutations) => {
     if (mutation.type === "childList") {
       mutation.addedNodes.forEach((node) => {
         if (node.nodeType === Node.ELEMENT_NODE) {
-          if (node.classList.contains("code-area-FNmip6")) {
+          if (node.classList.contains("code-block-element-vwNJex")) {
             addPreviewButton(node);
           } else {
-            const codeAreas = node.querySelectorAll(".code-area-FNmip6");
+            const codeAreas = node.querySelectorAll(
+              ".code-block-element-vwNJex"
+            );
             codeAreas.forEach(addPreviewButton);
           }
         }
@@ -105,4 +112,6 @@ const config = { childList: true, subtree: true };
 observer.observe(document.body, config);
 
 // 对于页面加载时已经存在的元素，立即添加按钮
-document.querySelectorAll(".code-area-FNmip6").forEach(addPreviewButton);
+document
+  .querySelectorAll(".code-block-element-vwNJex")
+  .forEach(addPreviewButton);
