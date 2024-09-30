@@ -46,7 +46,7 @@ function addPreviewButton(codeArea) {
       transform: translate(-50%, -50%);
       width: 820px;
       height: 620px;
-      overflow: scroll;
+      overflow-y: scroll;
       padding: 50px 0 0 0;
       background-color: #fff;
       border-radius: 10px;
