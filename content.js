@@ -46,7 +46,8 @@ function addPreviewButton(codeArea) {
       transform: translate(-50%, -50%);
       width: 720px;
       height: 520px;
-      padding: 85px 0 0 0;
+      overflow: scroll;
+      padding: 50px 0 0 0;
       background-color: #fff;
       border-radius: 10px;
       box-shadow: 0 2px 10px rgba(0,0,0,0.2);
@@ -87,37 +88,22 @@ function addPreviewButton(codeArea) {
   codeArea.appendChild(button);
 }
 
-// 创建一个 MutationObserver 实例
 const classMap = {
   "www.doubao.com": "code-block-element-vwNJex",
   "tongyi.aliyun.com": "tongyi-design-highlighter",
 };
-const observer = new MutationObserver((mutations) => {
-  mutations.forEach((mutation) => {
-    if (mutation.type === "childList") {
-      mutation.addedNodes.forEach((node) => {
-        if (node.nodeType === Node.ELEMENT_NODE) {
-          const domain = window.location.hostname;
-          const className = classMap[domain];
-          if (node.classList.contains(className)) {
-            addPreviewButton(node);
-          } else {
-            const codeAreas = node.querySelectorAll(`.${className}`);
-            codeAreas.forEach(addPreviewButton);
-          }
-        }
-      });
-    }
-  });
-});
 
-// 配置 observer
-const config = { childList: true, subtree: true };
+const domain = window.location.hostname;
+const className = classMap[domain];
 
-// 开始观察整个 document
-observer.observe(document.body, config);
-
-// 对于页面加载时已经存在的元素，立即添加按钮
-document
-  .querySelectorAll(".code-block-element-vwNJex")
-  .forEach(addPreviewButton);
+if (className) {
+  setInterval(() => {
+    //如果域名是tongyi.aliyun.com，删除classname下面所有的linenumber子元素
+    document.querySelectorAll(`.${className}`).forEach((codeArea) => {
+      if (domain === "tongyi.aliyun.com") {
+        codeArea.querySelectorAll(".linenumber").forEach((item) => item.remove());
+      }
+      addPreviewButton(codeArea);
+    });
+  }, 1500);
+}
