@@ -1,5 +1,7 @@
 // 创建一个函数来添加按钮
 function addPreviewButton(codeArea) {
+  // 如果codeArea.textContent中不包含<!DOCTYPE html>，则不添加按钮
+  if (!codeArea.textContent.includes("<!DOCTYPE html>")) return;
   if (codeArea.querySelector(".preview-button")) return; // 如果按钮已存在，则不再添加
   const button = document.createElement("button");
   button.textContent = "预览";
@@ -86,17 +88,21 @@ function addPreviewButton(codeArea) {
 }
 
 // 创建一个 MutationObserver 实例
+const classMap = {
+  "www.doubao.com": "code-block-element-vwNJex",
+  "tongyi.aliyun.com": "tongyi-design-highlighter",
+};
 const observer = new MutationObserver((mutations) => {
   mutations.forEach((mutation) => {
     if (mutation.type === "childList") {
       mutation.addedNodes.forEach((node) => {
         if (node.nodeType === Node.ELEMENT_NODE) {
-          if (node.classList.contains("code-block-element-vwNJex")) {
+          const domain = window.location.hostname;
+          const className = classMap[domain];
+          if (node.classList.contains(className)) {
             addPreviewButton(node);
           } else {
-            const codeAreas = node.querySelectorAll(
-              ".code-block-element-vwNJex"
-            );
+            const codeAreas = node.querySelectorAll(`.${className}`);
             codeAreas.forEach(addPreviewButton);
           }
         }
